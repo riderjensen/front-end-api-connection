@@ -18,7 +18,7 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
-					<a class="nav-link" href="#">Search <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="index.html">Search</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Delete</a>
@@ -64,7 +64,20 @@
 		</div>
 	</div>
 
-	<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div class="container" style="margin-top: 50px">
+	<div class="row">
+		<div class="col-md-4 col-xs-12"></div>
+		<div class="col-md-4 col-xs-12">
+	<div class="card-body">
+		<h5 class="card-title" id="subTitle"></h5>
+		<p class="card-text" id="information"></p>
+	</div>
+		</div>
+		<div class="col-md-4 col-xs-12"></div>
+	</div>
+</div>
+
+	
 </body>
 <script>
 	document.getElementById('submitButton').addEventListener('click', () => {
@@ -72,16 +85,24 @@
 		const secondDate = document.getElementById('secondDate').value;
 		const subRedit = document.getElementById('subRedit').value;
 
-		console.log(firstDate, secondDate, subRedit)
-		fetch(`https://riderjensen.com/api/${subRedit}/${firstDate}$${secondDate}`, {
-				mode: "no-cors"
-			})
+		let extraString = '';
+		if (firstDate != '' && secondDate != ''){
+			extraString = `${firstDate}$${secondDate}`
+		}
+
+		fetch(`https://riderjensen.com/api/${subRedit}/${extraString}`)
 			.then(function (response) {
 				console.log(response)
 				return response.json();
 			})
 			.then((myJson) => {
 				console.log(myJson)
+				document.getElementById('subTitle').innerText = `r/${subRedit}`;
+				document.getElementById('information').innerHTML = `
+				<p>Number of items processed: ${myJson.com}</p>
+				<p>Number of items found: ${myJson.found}</p>
+				<p>Ratio per one hundered words: ${(myJson.found/myJson.com) * 100}</p>
+				` 
 			})
 			.catch(err => console.log(err));
 	})
