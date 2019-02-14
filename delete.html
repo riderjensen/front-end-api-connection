@@ -17,16 +17,16 @@
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Search</a>
+				<li class="nav-item ">
+					<a class="nav-link" href="index.html">Search</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="delete.html">Delete</a>
+<li class="nav-item active">
+					<a class="nav-link" href="#">Delete</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="update.html">Update</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item active">
 					<a class="nav-link" href="create.html">Create</a>
 				</li>
 				<li class="nav-item">
@@ -40,51 +40,50 @@
 		<div class="row">
 			<div class="col-md-4 col-xs-12"></div>
 			<div class="form-group col-md-4 col-xs-12">
-				<div class="form-group">
-					<label for="firstDate">First Date</label>
-					<input type="text" class="form-control" id="firstDate" placeholder="YYYY-MM-DD" value="2019-2-1">
-					<small id="emailHelp" class="form-text text-muted">The data was being scraped on
-						January 15th,
-						2019.</small>
-				</div>
-				<div class="form-group">
-					<label for="secondDate">Second Date</label>
-					<input type="text" class="form-control" id="secondDate" placeholder="YYYY-MM-DD" value="2019-2-3">
-				</div>
-
-				<button class="btn btn-primary" id="submitButton">Submit</button>
-
-
+<div class="form-group">
+	<label for="theSubID">Your ID</label>
+	<input type="text" class="form-control" id="theSubID" required=true placeholder="">
+	<small class="form-text text-muted">You are only allowed to delete entries that you have made with your generated ID.</small>
+</div>
+				<button class="btn btn-primary" id="submitButton">Click to delete your entry</button>
 
 			</div>
 			<div class="col-md-4 col-xs-12"></div>
 		</div>
 	</div>
 
-	<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div class="container" style="margin-top: 50px">
+	<div class="row">
+		<div class="col-md-4 col-xs-12"></div>
+		<div class="col-md-4 col-xs-12">
+	<div class="card-body">
+		<h5 class="card-title" id="subTitle"></h5>
+		<p class="card-text" id="information"></p>
+	</div>
+		</div>
+		<div class="col-md-4 col-xs-12"></div>
+	</div>
+</div>
+
+	
 </body>
 <script>
 	document.getElementById('submitButton').addEventListener('click', () => {
-		const firstDate = document.getElementById('firstDate').value;
-		const secondDate = document.getElementById('secondDate').value;
 
-		fetch(`https://riderjensen.com/api/range/${firstDate}$${secondDate}`)
+const id = document.getElementById('theSubID').value
+
+fetch(`https://riderjensen.com/api/delete/${id}`, {
+			method: "DELETE"	
+		})
 			.then(function (response) {
 				console.log(response)
 				return response.json();
 			})
-			.then(function (myJson) {
-				let newChart = new CanvasJS.Chart("chartContainer", {
-					title: {
-						text: `Number of F words said per 100`
-					},
-					data: [{
-						// Change type to "doughnut", "line", "splineArea", etc.
-						type: "column",
-						dataPoints: myJson
-					}]
-				});
-				newChart.render();
+			.then((myJson) => {
+				console.log(myJson)
+document.getElementById('subTitle').innerText = `${myJson._id}`;
+				document.getElementById('information').innerHTML = `<p>This entry has been deleted</p>
+				`
 			})
 			.catch(err => console.log(err));
 	})

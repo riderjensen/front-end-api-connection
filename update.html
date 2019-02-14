@@ -20,17 +20,17 @@
 				<li class="nav-item ">
 					<a class="nav-link" href="index.html">Search</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item ">
 					<a class="nav-link" href="delete.html">Delete</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="update.html">Update</a>
+				<li class="nav-item active">
+					<a class="nav-link " href="#">Update</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="create.html">Create</a>
 				</li>
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Find one</a>
+				<li class="nav-item">
+					<a class="nav-link" href="findone.html">Find one</a>
 				</li>
 			</ul>
 		</div>
@@ -41,23 +41,26 @@
 			<div class="col-md-4 col-xs-12"></div>
 			<div class="form-group col-md-4 col-xs-12">
 				<div class="form-group">
-					<label for="subRedit">Subreddit Name</label>
-					<input type="text" class="form-control" id="subRedit" placeholder="" value="pics">
-					<small class="form-text text-muted">Capitalization does matter</small>
+					<label for="theSubID">Your ID</label>
+					<input type="text" class="form-control" id="theSubID" required=true placeholder="">
+					<small class="form-text text-muted">If you do not have an ID, generate one <a href="create.html">here</a>.</small>
 				</div>
 				<div class="form-group">
-					<label for="firstDate">First Date</label>
-					<input type="text" class="form-control" id="firstDate" placeholder="YYYY-MM-DD" value="2019-2-1">
-					<small id="emailHelp" class="form-text text-muted">For data from all time, leave the dates empty</small>
+				<label for="subNameUpdate">Subreddit to update (case sensitive)</label>
+					<input type="text" class="form-control" id="subNameUpdate" required placeholder="pics">
+					<small class="form-text text-muted">If the id already has a subreddit with that name, the information will be overwritten</small>
+
 				</div>
 				<div class="form-group">
-					<label for="secondDate">Second Date</label>
-					<input type="text" class="form-control" id="secondDate" placeholder="YYYY-MM-DD" value="2019-2-3">
+				<label for="subScanned">Instances scanned</label>
+					<input type="number" class="form-control" id="subScanned" required placeholder="10">
+				</div>
+				<div class="form-group">
+				<label for="subFound">Instances found</label>
+					<input type="number" class="form-control" id="subFound" required placeholder="5">
 				</div>
 
 				<button class="btn btn-primary" id="submitButton">Submit</button>
-
-
 
 			</div>
 			<div class="col-md-4 col-xs-12"></div>
@@ -81,28 +84,33 @@
 </body>
 <script>
 	document.getElementById('submitButton').addEventListener('click', () => {
-		const firstDate = document.getElementById('firstDate').value;
-		const secondDate = document.getElementById('secondDate').value;
-		const subRedit = document.getElementById('subRedit').value;
+		const subID = document.getElementById('theSubID').value;
+		const subNameUpdate = document.getElementById('subNameUpdate').value;
+		const subScanned = document.getElementById('subScanned').value;
+		const subFound = document.getElementById('subFound').value;
 
-		let extraString = '';
-		if (firstDate != '' && secondDate != ''){
-			extraString = `${firstDate}$${secondDate}`
+		const newObj = {
+			"items": {}
+		}
+		newObj.items[`r/${subNameUpdate}`] = {
+			"com": subScanned,
+			"found": subFound
 		}
 
-		fetch(`https://riderjensen.com/api/${subRedit}/${extraString}`)
+		console.log(newObj)
+
+		fetch(`http://localhost:8080/api/update/${subID}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(newObj)
+		})
 			.then(function (response) {
-				console.log(response)
 				return response.json();
 			})
 			.then((myJson) => {
-				console.log(myJson)
-				document.getElementById('subTitle').innerText = `r/${subRedit}`;
-				document.getElementById('information').innerHTML = `
-				<p>Number of items processed: ${myJson.com}</p>
-				<p>Number of items found: ${myJson.found}</p>
-				<p>Ratio per one hundered words: ${(myJson.found/myJson.com) * 100}</p>
-				` 
+				document.getElementById('subTitle').innerText = `Your item with the id ${myJson._id} was updated`;
 			})
 			.catch(err => console.log(err));
 	})

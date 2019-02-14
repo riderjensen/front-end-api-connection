@@ -17,8 +17,8 @@
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Search</a>
+				<li class="nav-item ">
+					<a class="nav-link" href="index.html">Search</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="delete.html">Delete</a>
@@ -26,8 +26,8 @@
 				<li class="nav-item">
 					<a class="nav-link" href="update.html">Update</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="create.html">Create</a>
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Create</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="findone.html">Find one</a>
@@ -40,51 +40,44 @@
 		<div class="row">
 			<div class="col-md-4 col-xs-12"></div>
 			<div class="form-group col-md-4 col-xs-12">
-				<div class="form-group">
-					<label for="firstDate">First Date</label>
-					<input type="text" class="form-control" id="firstDate" placeholder="YYYY-MM-DD" value="2019-2-1">
-					<small id="emailHelp" class="form-text text-muted">The data was being scraped on
-						January 15th,
-						2019.</small>
-				</div>
-				<div class="form-group">
-					<label for="secondDate">Second Date</label>
-					<input type="text" class="form-control" id="secondDate" placeholder="YYYY-MM-DD" value="2019-2-3">
-				</div>
 
-				<button class="btn btn-primary" id="submitButton">Submit</button>
-
-
+				<button class="btn btn-primary" id="submitButton">Click to create a new entry</button>
 
 			</div>
 			<div class="col-md-4 col-xs-12"></div>
 		</div>
 	</div>
 
-	<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div class="container" style="margin-top: 50px">
+	<div class="row">
+		<div class="col-md-4 col-xs-12"></div>
+		<div class="col-md-4 col-xs-12">
+	<div class="card-body">
+		<h5 class="card-title" id="subTitle"></h5>
+		<p class="card-text" id="information"></p>
+	</div>
+		</div>
+		<div class="col-md-4 col-xs-12"></div>
+	</div>
+</div>
+
+	
 </body>
 <script>
 	document.getElementById('submitButton').addEventListener('click', () => {
-		const firstDate = document.getElementById('firstDate').value;
-		const secondDate = document.getElementById('secondDate').value;
-
-		fetch(`https://riderjensen.com/api/range/${firstDate}$${secondDate}`)
+fetch(`https://riderjensen.com/api/create`, {
+			method: "POST"	
+		})
 			.then(function (response) {
 				console.log(response)
 				return response.json();
 			})
-			.then(function (myJson) {
-				let newChart = new CanvasJS.Chart("chartContainer", {
-					title: {
-						text: `Number of F words said per 100`
-					},
-					data: [{
-						// Change type to "doughnut", "line", "splineArea", etc.
-						type: "column",
-						dataPoints: myJson
-					}]
-				});
-				newChart.render();
+			.then((myJson) => {
+				console.log(myJson)
+				document.getElementById('subTitle').innerText = `Your  ID`;
+				document.getElementById('information').innerHTML = `<p>${myJson._id}</p>
+				<p>Use this id in conjunction with the update area in order to store new information</p>
+				`
 			})
 			.catch(err => console.log(err));
 	})
